@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -35,7 +36,9 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance()); // this is for study purpose and by doing this we don't use any password encoder so password will save to the database as it is
+//        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance()); // this is for study purpose and by doing this we don't use any password encoder so password will save to the database as it is
+        // we cannot use above NoPassowrdEncoder anymore cause when we use password encryption so to validate encryption password we do as follow,
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12)); // for this application we use bcrypt encoder so we make a new object and pass the strength we used for encrypt password and that's all
         provider.setUserDetailsService(userDetailsService); //user detail service is used o verify user details and here we are define a custom one
         return provider;
     }
