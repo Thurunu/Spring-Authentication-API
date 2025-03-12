@@ -1,4 +1,4 @@
-package com.thurunu.springsecex;
+package com.thurunu.springsecex.model;
 
 
 public class Student {

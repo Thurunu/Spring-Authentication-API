@@ -1,0 +1,64 @@
+package com.thurunu.springsecex.config;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        return http.csrf(customizer -> customizer.disable()) // this will disable csrf tokens
+            .authorizeHttpRequests(request -> request.anyRequest().authenticated()) // by adding this no one can access the page without login credentials
+//            .formLogin(Customizer.withDefaults()) //this will add the login form
+                //by removing forLogin() we remove login from which appear in the browser and we only enable login request through api requests
+            .httpBasic(Customizer.withDefaults()) //this line is for use postman to handle requests
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance()); // this is for study purpose and by doing this we don't use any password encoder so password will save to the database as it is
+        provider.setUserDetailsService(userDetailsService); //user detail service is used o verify user details and here we are define a custom one
+        return provider;
+    }
+
+// this is how we define user to the system, and how spring security allow users
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//
+//        UserDetails user1 = User
+//                .withDefaultPasswordEncoder()
+//                .username("Tharuka")
+//                .password("12345678")
+//                .build();
+//        UserDetails user2 = User
+//                .withDefaultPasswordEncoder()
+//                .username("Chamodi")
+//                .password("c1234")
+//                .build();
+//
+//// this will tell to spring security to these are particular user credentials if its correct log in them
+//        return new InMemoryUserDetailsManager(user1, user2);
+//        // but this cannot use in developing this is only for study
+//    }
+
+
+}

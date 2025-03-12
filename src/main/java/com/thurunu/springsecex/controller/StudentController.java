@@ -1,5 +1,6 @@
-package com.thurunu.springsecex;
+package com.thurunu.springsecex.controller;
 
+import com.thurunu.springsecex.model.Student;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
